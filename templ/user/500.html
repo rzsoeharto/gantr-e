@@ -1,0 +1,31 @@
+{{ define "serverError" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+    rel="stylesheet"
+  />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>500 Internal Server Error</title>
+  <style>
+    body {
+      font-family: "Inter", sans-serif;
+    }
+    </style>
+  </head>
+<body>
+<div class="flex flex-box h-screen w-screen place-content-center">
+  <div class="flex flex-box flex-col self-center">
+    <h1 class="text-3xl font-bold">Uh-oh something went wrong.</h1>
+    <p>Please refresh the page</p>
+  </div>
+</div>
+</body>
+</body>
+</html>
+{{ end }}

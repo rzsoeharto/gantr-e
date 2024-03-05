@@ -13,6 +13,7 @@ func GenerateToken(currQueue int64) string {
 	currQueue++
 
 	key := []byte(os.Getenv("SECRET_KEY"))
+
 	claims := models.QueueClaimsStruct{
 		QueueNumber: currQueue,
 		RegisteredClaims: jwt.RegisteredClaims{

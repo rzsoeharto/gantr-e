@@ -26,7 +26,5 @@ func main() {
 		userGroup.GET("/:est_name", middlewares.RequestParams, middlewares.CheckCookies, handlers.QueueHandler)
 	}
 
-	r.POST("/test", handlers.InitQueue)
-
 	r.Run()
 }

@@ -22,8 +22,11 @@
   <body>
     <div class="flex flex-box h-screen w-screen place-content-center">
       <div class="flex flex-box flex-col self-center">
-        <h1 class="text-3xl font-bold">You are in queue</h1>
-        <p>You are {{ .data }} in queue.</p>
+        <h1 class="text-4xl font-bold">You are in queue</h1>
+        <h1 class="text-2xl font-bold">
+          Your queue number is: {{ .QueueNumber }}
+        </h1>
+        <p>You are {{ .QueueOrdinal }} in queue.</p>
       </div>
     </div>
   </body>

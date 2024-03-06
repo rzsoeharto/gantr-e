@@ -82,6 +82,7 @@ func QueueHandler(c *gin.Context) {
 	ordinalIndicator := utils.QueueFormat(LineLen)
 
 	c.HTML(http.StatusOK, "customer", gin.H{
-		"data": fmt.Sprintf("%v%v", LineLen, ordinalIndicator),
+		"QueueNumber":  CustomerQueueNumber,
+		"QueueOrdinal": fmt.Sprintf("%v%v", LineLen, ordinalIndicator),
 	})
 }

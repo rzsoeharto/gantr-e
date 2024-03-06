@@ -5,6 +5,7 @@ import (
 	jwthandler "gantre/JWTHandlers"
 	"gantre/database"
 	"gantre/models"
+	"gantre/utils"
 	"log"
 	"net/http"
 	"sort"
@@ -16,13 +17,10 @@ import (
 func QueueHandler(c *gin.Context) {
 	client := database.DbAccess(c)
 
-	var QueueDB models.QueueModel
-
 	estType := c.GetString("est_type")
 	estName := c.GetString("est_name")
 
 	doc, err := client.Collection(estType).Doc(estName).Get(c)
-
 	if err != nil {
 		log.Println(err)
 		c.JSON(500, gin.H{
@@ -30,51 +28,49 @@ func QueueHandler(c *gin.Context) {
 		})
 	}
 
-	scanError := doc.DataTo(&QueueDB)
-
-	t := c.GetString("token")
-
-	if scanError != nil {
-		log.Println(scanError)
-
-		c.HTML(500, "serverError", gin.H{
-			"Message": "Something went wrong in the backend.",
-		})
-
+	var QueueDB models.QueueModel
+	if err := doc.DataTo(&QueueDB); err != nil {
+		log.Println("Error scanning data:", err)
+		c.HTML(http.StatusInternalServerError, "serverError", gin.H{"Message": "Something went wrong in the backend."})
 		return
 	}
 
-	QueueList := make([]int, 0, 20)
-
+	QueueList := make([]int, len(QueueDB.QueueList))
 	for _, v := range QueueDB.QueueList {
 		QueueList = append(QueueList, v)
 	}
 
 	sort.SliceStable(QueueList, func(i, j int) bool { return QueueList[i] < QueueList[j] })
 
+	t := c.GetString("token")
 	if t == "NoToken" {
-		NextQueue := QueueList[len(QueueList)-1]
+		var NextQueue int
+
+		if len(QueueDB.QueueList) == 0 {
+			NextQueue = 1
+		} else {
+			NextQueue = QueueList[len(QueueList)-1] + 1
+		}
+
 		tokenString := jwthandler.GenerateToken(int64(NextQueue))
-		QueueDB.QueueList[tokenString] = NextQueue + 1
+		QueueDB.QueueList[tokenString] = NextQueue
 
-		_, setErr := client.Collection(estType).Doc(estName).Set(c, map[string]interface{}{
+		if _, err := client.Collection(estType).Doc(estName).Set(c, map[string]interface{}{
 			"QueueList": map[string]interface{}{
-				tokenString: NextQueue + 1,
+				tokenString: NextQueue,
 			},
-		}, firestore.MergeAll)
-
-		if setErr != nil {
-			log.Println(setErr)
-			c.JSON(500, gin.H{
-				"err": setErr,
-			})
+		}, firestore.MergeAll); err != nil {
+			log.Println("Error updating Firestore:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update data in database"})
 			return
 		}
+
+		ordinalIndicator := utils.QueueFormat(int64(NextQueue))
 
 		c.SetCookie("SID", tokenString, 604800, "/", "localhost", true, true)
 
 		c.HTML(http.StatusOK, "customer", gin.H{
-			"data": fmt.Sprintf("%v nd/rd/th idk", NextQueue+1),
+			"data": fmt.Sprintf("%v%v", NextQueue, ordinalIndicator),
 		})
 
 		return
@@ -83,8 +79,9 @@ func QueueHandler(c *gin.Context) {
 	CustomerQueueNumber, _ := jwthandler.ParseCookies(c)
 
 	LineLen := int64(CustomerQueueNumber) - QueueDB.CurrentQueueNumber
+	ordinalIndicator := utils.QueueFormat(LineLen)
 
 	c.HTML(http.StatusOK, "customer", gin.H{
-		"data": fmt.Sprintf("%v nd/rd/th idk", LineLen),
+		"data": fmt.Sprintf("%v%v", LineLen, ordinalIndicator),
 	})
 }

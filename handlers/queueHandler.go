@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"fmt"
 	jwthandler "gantre/JWTHandlers"
 	"gantre/database"
 	"gantre/models"
-	"gantre/utils"
 	"log"
 	"net/http"
 	"sort"
@@ -15,6 +13,8 @@ import (
 )
 
 func QueueHandler(c *gin.Context) {
+	var QueueDB models.QueueModel
+
 	client := database.DbAccess(c)
 
 	estType := c.GetString("est_type")
@@ -24,14 +24,13 @@ func QueueHandler(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(500, gin.H{
-			"Message": "Something went wrong in the backend.",
+			"Message": "Uh-oh, Something went wrong.",
 		})
 	}
 
-	var QueueDB models.QueueModel
 	if err := doc.DataTo(&QueueDB); err != nil {
 		log.Println("Error scanning data:", err)
-		c.HTML(http.StatusInternalServerError, "serverError", gin.H{"Message": "Something went wrong in the backend."})
+		c.HTML(500, "serverError", gin.H{})
 		return
 	}
 
@@ -61,16 +60,15 @@ func QueueHandler(c *gin.Context) {
 			},
 		}, firestore.MergeAll); err != nil {
 			log.Println("Error updating Firestore:", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update data in database"})
+			c.JSON(500, gin.H{"Error": "Failed to update database"})
 			return
 		}
-
-		ordinalIndicator := utils.QueueFormat(int64(NextQueue))
 
 		c.SetCookie("SID", tokenString, 604800, "/", "localhost", true, true)
 
 		c.HTML(http.StatusOK, "customer", gin.H{
-			"data": fmt.Sprintf("%v%v", NextQueue, ordinalIndicator),
+			"QueueNumber":        NextQueue,
+			"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 		})
 
 		return
@@ -78,11 +76,8 @@ func QueueHandler(c *gin.Context) {
 
 	CustomerQueueNumber, _ := jwthandler.ParseCookies(c)
 
-	LineLen := int64(CustomerQueueNumber) - QueueDB.CurrentQueueNumber
-	ordinalIndicator := utils.QueueFormat(LineLen)
-
 	c.HTML(http.StatusOK, "customer", gin.H{
-		"QueueNumber":  CustomerQueueNumber,
-		"QueueOrdinal": fmt.Sprintf("%v%v", LineLen, ordinalIndicator),
+		"QueueNumber":        CustomerQueueNumber,
+		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})
 }

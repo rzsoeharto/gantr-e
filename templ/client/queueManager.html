@@ -29,7 +29,7 @@
         <div
           class="flex flex-row gap-24"
           hx-ext="ws"
-          ws-connect="ws://localhost:8080/qm/{{.EstType}}/{{.EstName}}/ws"
+          ws-connect="ws://localhost:8080/{{.EstType}}/{{.EstName}}/ws"
         >
           <button
             hx-post="http://localhost:8080/qm/{{.EstType}}/{{.EstName}}"

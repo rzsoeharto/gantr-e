@@ -36,9 +36,10 @@ func main() {
 	userGroup := r.Group("/:est_type")
 	{
 		userGroup.GET("/:est_name", middlewares.RequestParams, middlewares.CheckCookies, handlers.QueueHandler)
-		userGroup.GET("/:est_name/ws", middlewares.RequestParams, middlewares.CheckCookies, handlers.WebsocketHandler)
+		userGroup.GET("/:est_name/ws/:user", middlewares.RequestParams, middlewares.CheckCookies, handlers.WebsocketHandler)
 	}
 
+	// qm is short for queue manager
 	clientGroup := r.Group("/qm/:est_type")
 	{
 		clientGroup.GET("/:est_name", middlewares.RequestParams, handlers.FrontDeskHandler)

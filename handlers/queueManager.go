@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"gantre/database"
 	"gantre/models"
 	"log"
@@ -38,6 +39,7 @@ func FrontDeskHandler(c *gin.Context) {
 	c.HTML(200, "frontDesk", gin.H{
 		"EstType":            estType,
 		"EstName":            estName,
+		"UserType":           "qm",
 		"RestaurantName":     QueueDB.RestaurantName,
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})
@@ -96,4 +98,6 @@ func UpdateFromFrontDeskHandler(c *gin.Context) {
 	c.HTML(200, "clientQueueNumber", gin.H{
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})
+
+	broadcastData(estName, fmt.Sprint(QueueDB.CurrentQueueNumber), "qm")
 }

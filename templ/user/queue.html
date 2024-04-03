@@ -3,6 +3,7 @@
 <html lang="en">
   <head>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/ws.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,9 +22,14 @@
   </head>
   <body>
     <div class="flex flex-box h-screen w-screen place-content-center">
-      <div class="flex flex-col mt-64 gap-3">
+      <div
+        class="flex flex-col mt-64 gap-3"
+        hx-ext="ws"
+        hx-target="#current-queue-number"
+        ws-connect="ws://localhost:8080/{{.EstType}}/{{.EstName}}/ws/{{.UserType}}"
+      >
         <h1 class="text-3xl font-bold">Current Queue Number:</h1>
-        <h1 class="text-9xl text-center font-bold">
+        <h1 id="current-queue-number" class="text-9xl text-center font-bold">
           {{ .CurrentQueueNumber }}
         </h1>
         <h1 class="text-2xl text-center font-bold">

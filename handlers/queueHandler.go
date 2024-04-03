@@ -67,16 +67,24 @@ func QueueHandler(c *gin.Context) {
 		c.SetCookie("SID", tokenString, 604800, "/", "localhost", true, true)
 
 		c.HTML(http.StatusOK, "customer", gin.H{
+			"EstType":            estType,
+			"EstName":            estName,
+			"UserType":           "user",
 			"QueueNumber":        NextQueue,
 			"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 		})
 
+		// Notify front desk
+		broadcastData(estName, "hi, update from backend", "user")
 		return
 	}
 
 	CustomerQueueNumber, _ := jwthandler.ParseCookies(c)
 
 	c.HTML(http.StatusOK, "customer", gin.H{
+		"EstType":            estType,
+		"EstName":            estName,
+		"UserType":           "user",
 		"QueueNumber":        CustomerQueueNumber,
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})

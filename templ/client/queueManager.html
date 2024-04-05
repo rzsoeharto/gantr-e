@@ -55,7 +55,15 @@
         class="flex flex-col self-center border-[1px] border-black w-[12vw] h-5/6 px-5 py-2"
       >
         <p class="text-lg">Antrean:</p>
-        <div id="queue-line" class="flex flex-col gap-1 w-full"></div>
+        <div
+          id="queue-line"
+          class="flex flex-col gap-1 w-full overflow-scroll"
+          hx-swap="afterend"
+        >
+          {{ range $_, $value := .QueueList }}
+          <p id="queue-number">{{ $value }}</p>
+          {{ end }}
+        </div>
       </div>
     </div>
   </body>

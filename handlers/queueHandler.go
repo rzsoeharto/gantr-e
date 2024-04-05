@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"strconv"
 
 	"cloud.google.com/go/firestore"
 	"github.com/gin-gonic/gin"
@@ -75,7 +76,7 @@ func QueueHandler(c *gin.Context) {
 		})
 
 		// Notify front desk
-		broadcastToFrontDesk(estName, "hi, update from backend")
+		broadcastToFrontDesk(estName, strconv.Itoa(NextQueue))
 		return
 	}
 

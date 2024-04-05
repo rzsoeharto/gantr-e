@@ -21,8 +21,10 @@
     <title>{{ .RestaurantName }} - Front desk</title>
   </head>
   <body>
-    <div class="flex h-screen w-screen place-content-center">
-      <div id="queue-line" class="flex flex-col self-center gap-12">
+    <div
+      class="flex flex-row h-screen w-screen place-content-center gap-12 pl-[12vw]"
+    >
+      <div class="flex flex-col self-center gap-12">
         <p id="current-queue-number" class="text-3xl text-center">
           No Antrean: {{ .CurrentQueueNumber }}
         </p>
@@ -35,7 +37,7 @@
             hx-post="http://localhost:8080/qm/{{.EstType}}/{{.EstName}}"
             hx-trigger="click"
             hx-target="#current-queue-number"
-            class="text-3xl w-[320px] h-[180px] bg-[#ff8080] hover:bg-[#ff9080]"
+            class="text-3xl w-[240px] h-[100px] bg-[#82ff80] bg-[#ff8080] hover:bg-[#ff9080]"
           >
             Lewat
           </button>
@@ -43,11 +45,17 @@
             hx-post="http://localhost:8080/qm/{{.EstType}}/{{.EstName}}"
             hx-trigger="click"
             hx-target="#current-queue-number"
-            class="text-3xl w-[320px] h-[180px] bg-[#82ff80] hover:bg-[#80ffae]"
+            class="text-3xl w-[240px] h-[100px] bg-[#82ff80] hover:bg-[#80ffae]"
           >
             Masuk
           </button>
         </div>
+      </div>
+      <div
+        class="flex flex-col self-center border-[1px] border-black w-[12vw] h-5/6 px-5 py-2"
+      >
+        <p class="text-lg">Antrean:</p>
+        <div id="queue-line" class="flex flex-col gap-1 w-full"></div>
       </div>
     </div>
   </body>

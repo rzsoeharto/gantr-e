@@ -53,21 +53,27 @@ func WebsocketHandler(c *gin.Context) {
 	}()
 }
 
-func broadcastData(estName string, msg string, broadcastType string) {
-	var wsConnString string
+func broadcastToUsers(estName string, msg string) {
+	data := fmt.Sprintf(`<h1 id="current-queue-number" class="text-9xl text-center font-bold"> %s </h1>`, msg)
+	message := []byte(data)
+	wsConnString := fmt.Sprintf("user%s", estName)
 
-	message := []byte(msg)
-
-	// broadcastType means where is the data sent from
-	if broadcastType == "qm" {
-		// for example this data is sent from the qm to all users
-		wsConnString = fmt.Sprintf("user%s", estName)
-	} else {
-		// vice versa this is when a user joins and qm needs to be updated
-		wsConnString = fmt.Sprintf("qm%s", estName)
+	log.Println("Broadcasting to: ", wsConnString)
+	if _, ok := connections[wsConnString]; !ok {
+		return
 	}
 
-	log.Println("Triggered: ", wsConnString)
+	for conn := range connections[wsConnString] {
+		_ = wsutil.WriteServerText(conn, message)
+	}
+}
+
+func broadcastToFrontDesk(estName string, msg string) {
+	//
+	message := []byte(msg)
+	wsConnString := fmt.Sprintf("qm%s", estName)
+
+	log.Println("Broadcasting to: ", wsConnString)
 	if _, ok := connections[wsConnString]; !ok {
 		return
 	}

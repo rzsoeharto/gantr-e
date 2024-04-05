@@ -75,7 +75,7 @@ func QueueHandler(c *gin.Context) {
 		})
 
 		// Notify front desk
-		broadcastData(estName, "hi, update from backend", "user")
+		broadcastToFrontDesk(estName, "hi, update from backend")
 		return
 	}
 

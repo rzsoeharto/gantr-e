@@ -99,5 +99,5 @@ func UpdateFromFrontDeskHandler(c *gin.Context) {
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})
 
-	broadcastData(estName, fmt.Sprint(QueueDB.CurrentQueueNumber), "qm")
+	broadcastToUsers(estName, fmt.Sprint(QueueDB.CurrentQueueNumber))
 }

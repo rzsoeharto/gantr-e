@@ -40,7 +40,7 @@ func FrontDeskHandler(c *gin.Context) {
 		"EstType":            estType,
 		"EstName":            estName,
 		"UserType":           "qm",
-		"QueueList":          QueueDB.QueueList,
+		"QueueList":          len(QueueDB.QueueList),
 		"RestaurantName":     QueueDB.RestaurantName,
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})

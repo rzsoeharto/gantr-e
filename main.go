@@ -44,7 +44,6 @@ func main() {
 	{
 		clientGroup.GET("/:est_name", middlewares.RequestParams, handlers.FrontDeskHandler)
 		clientGroup.POST("/:est_name", middlewares.RequestParams, handlers.UpdateFromFrontDeskHandler)
+		r.Run()
 	}
-
-	r.Run()
 }

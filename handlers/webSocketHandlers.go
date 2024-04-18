@@ -69,7 +69,7 @@ func broadcastToUsers(estName string, msg string) {
 }
 
 func broadcastToFrontDesk(estName string, msg string) {
-	data := fmt.Sprintf(`<p id="queue-number">%s</p></div>`, msg)
+	data := fmt.Sprintf(`<p id="queue-number-%s">%s</p>`, msg, msg)
 	message := []byte(data)
 	wsConnString := fmt.Sprintf("qm%s", estName)
 

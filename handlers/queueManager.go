@@ -36,11 +36,18 @@ func FrontDeskHandler(c *gin.Context) {
 		return
 	}
 
+	lineLeng := len(QueueDB.QueueList)
+	line := []int64{}
+
+	for a := range lineLeng {
+		line = append(line, int64(a+1))
+	}
+
 	c.HTML(200, "frontDesk", gin.H{
 		"EstType":            estType,
 		"EstName":            estName,
 		"UserType":           "qm",
-		"QueueList":          len(QueueDB.QueueList),
+		"QueueList":          line,
 		"RestaurantName":     QueueDB.RestaurantName,
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})
@@ -85,6 +92,13 @@ func UpdateFromFrontDeskHandler(c *gin.Context) {
 		return
 	}
 
+	for k, v := range QueueDB.QueueList {
+		if v == int(QueueDB.CurrentQueueNumber) {
+			delete(QueueDB.QueueList, k)
+			break
+		}
+	}
+
 	QueueDB.CurrentQueueNumber++
 
 	if _, err := client.Collection(estType).Doc(estName).Set(c, map[string]interface{}{
@@ -96,7 +110,7 @@ func UpdateFromFrontDeskHandler(c *gin.Context) {
 		})
 	}
 
-	c.HTML(200, "clientQueueNumber", gin.H{
+	c.HTML(200, "frontDeskMain", gin.H{
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})
 

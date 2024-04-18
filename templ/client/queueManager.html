@@ -26,6 +26,7 @@
   </head>
   <body>
     <div
+      id="main"
       class="flex flex-row h-screen w-screen place-content-center gap-12 pl-[12vw]"
     >
       <div class="flex flex-col self-center gap-12">
@@ -60,17 +61,58 @@
       >
         <p class="text-lg">Antrean:</p>
         <div id="queue-line" class="flex flex-col gap-1 w-full overflow-scroll">
-          <template x-for="i in 100">
-            <p id="queue-number" x-text="i"></p>
-          </template>
+          {{ range $_, $v := .QueueList }}
+          <p id="queue-number-{{$v}}">{{ $v }}</p>
+          {{ end }}
         </div>
       </div>
     </div>
   </body>
 </html>
 
-{{ end }}{{ define "clientQueueNumber" }}
-<p id="current-queue-number" class="text-3xl text-center">
-  No Antrean: {{ .CurrentQueueNumber }}
-</p>
+{{ end }}{{ define "frontDeskMain" }}
+<div
+  id="main"
+  class="flex flex-row h-screen w-screen place-content-center gap-12 pl-[12vw]"
+>
+  <div class="flex flex-col self-center gap-12">
+    <p id="current-queue-number" class="text-3xl text-center">
+      No Antrean: {{ .CurrentQueueNumber }}
+    </p>
+    <div
+      class="flex flex-row gap-24"
+      hx-ext="ws"
+      ws-connect="ws://localhost:8080/{{.EstType}}/{{.EstName}}/ws/{{.UserType}}"
+      hx-target="#queue-line"
+      hx-swap="beforeend"
+    >
+      <button
+        hx-post="http://localhost:8080/qm/{{.EstType}}/{{.EstName}}"
+        hx-trigger="click"
+        hx-target="#current-queue-number"
+        class="text-3xl w-[240px] h-[100px] bg-[#82ff80] bg-[#ff8080] hover:bg-[#ff9080]"
+      >
+        Lewat
+      </button>
+      <button
+        hx-post="http://localhost:8080/qm/{{.EstType}}/{{.EstName}}"
+        hx-trigger="click"
+        hx-target="#current-queue-number"
+        class="text-3xl w-[240px] h-[100px] bg-[#82ff80] hover:bg-[#80ffae]"
+      >
+        Masuk
+      </button>
+    </div>
+  </div>
+  <div
+    class="flex flex-col self-center border-[1px] border-black w-[12vw] h-5/6 px-5 py-2"
+  >
+    <p class="text-lg">Antrean:</p>
+    <div id="queue-line" class="flex flex-col gap-1 w-full overflow-scroll">
+      {{ range $_, $v := .QueueList }}
+      <p id="queue-number-{{$v}}">{{ $v }}</p>
+      {{ end }}
+    </div>
+  </div>
+</div>
 {{ end }}

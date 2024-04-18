@@ -7,7 +7,6 @@ import (
 	"log"
 	"sort"
 
-	"cloud.google.com/go/firestore"
 	"github.com/gin-gonic/gin"
 )
 
@@ -92,6 +91,8 @@ func UpdateFromFrontDeskHandler(c *gin.Context) {
 		return
 	}
 
+	// Brute forced solution. Fix later by improving db design
+	// wost case is now (O)n2
 	for k, v := range QueueDB.QueueList {
 		if v == int(QueueDB.CurrentQueueNumber) {
 			delete(QueueDB.QueueList, k)
@@ -102,8 +103,9 @@ func UpdateFromFrontDeskHandler(c *gin.Context) {
 	QueueDB.CurrentQueueNumber++
 
 	if _, err := client.Collection(estType).Doc(estName).Set(c, map[string]interface{}{
+		"QueueList":          QueueDB.QueueList,
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
-	}, firestore.MergeAll); err != nil {
+	}); err != nil {
 		log.Println("Error updating firestore:", err)
 		c.JSON(500, gin.H{
 			"Error": "Failed to update database",
@@ -111,6 +113,11 @@ func UpdateFromFrontDeskHandler(c *gin.Context) {
 	}
 
 	c.HTML(200, "frontDeskMain", gin.H{
+		"EstType":            estType,
+		"EstName":            estName,
+		"UserType":           "qm",
+		"QueueList":          QueueList,
+		"RestaurantName":     QueueDB.RestaurantName,
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})
 

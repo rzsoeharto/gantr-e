@@ -38,28 +38,25 @@
         </h1>
       </div>
     </div>
-    <audio
-      id="notification-sound"
-      src="https://firebasestorage.googleapis.com/v0/b/antr-e.appspot.com/o/gantre-notification.wav?alt=media&token=f232c299-1944-4aa6-9724-39615078754d"
-      preload="auto"
-      loop
-    ></audio>
     <script>
       var queueNumber = "{{ .QueueNumber }}";
-      var audio = document.getElementById("notification-sound");
-      var loopTime = 15;
+
+      function soundNotification() {
+        const audio = new Audio(
+          "https://firebasestorage.googleapis.com/v0/b/antr-e.appspot.com/o/gantre-notification.wav?alt=media&token=599c30e8-7b52-4fd6-b64d-646cf64ebb50"
+        );
+        audio.play();
+
+        setTimeout(function () {
+          audio.currentTime = 0;
+          audio.pause();
+        }, 15000);
+      }
 
       document.body.addEventListener("htmx:wsBeforeMessage", function (e) {
-        if (e.detail.message == queueNumber) {
-          audio.currentTime = 0;
-          audio.play();
-        }
-      });
-
-      audio.addEventListener("timeUpdate", function () {
-        if (audio.currentTime > loopTime) {
-          audio.currentTime = 0;
-          audio.play();
+        const message = e.detail.message;
+        if (message == queueNumber) {
+          soundNotification();
         }
       });
     </script>

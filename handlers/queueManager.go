@@ -94,8 +94,6 @@ func UpdateFromFrontDeskHandler(c *gin.Context) {
 			}
 		}
 
-		QueueDB.CurrentQueueNumber++
-
 		if _, err := client.Collection(estType).Doc(estName).Update(c, []firestore.Update{
 			{
 				Path:  "CurrentQueueNumber",

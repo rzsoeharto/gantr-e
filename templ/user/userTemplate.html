@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/ws.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ .HostName }}/static/htmx.min.js"></script>
+    <script src="{{ .HostName }}/static/ws.js"></script>
+    <link href="{{ .HostName }}/static/main.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,6 +26,7 @@
         class="flex flex-col mt-64 gap-3"
         hx-ext="ws"
         hx-target="#current-queue-number"
+        hx-swap="innerHTML"
         ws-connect="ws://localhost:8080/{{.EstType}}/{{.EstName}}/ws/{{.UserType}}"
       >
         <h1 class="text-3xl font-bold">Current Queue Number:</h1>
@@ -37,6 +38,31 @@
         </h1>
       </div>
     </div>
+    <audio
+      id="notification-sound"
+      src="https://firebasestorage.googleapis.com/v0/b/antr-e.appspot.com/o/gantre-notification.wav?alt=media&token=f232c299-1944-4aa6-9724-39615078754d"
+      preload="auto"
+      loop
+    ></audio>
+    <script>
+      var queueNumber = "{{ .QueueNumber }}";
+      var audio = document.getElementById("notification-sound");
+      var loopTime = 15;
+
+      document.body.addEventListener("htmx:wsBeforeMessage", function (e) {
+        if (e.detail.message == queueNumber) {
+          audio.currentTime = 0;
+          audio.play();
+        }
+      });
+
+      audio.addEventListener("timeUpdate", function () {
+        if (audio.currentTime > loopTime) {
+          audio.currentTime = 0;
+          audio.play();
+        }
+      });
+    </script>
   </body>
 </html>
 {{ end }}

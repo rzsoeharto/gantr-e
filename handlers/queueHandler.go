@@ -21,11 +21,13 @@ func QueueHandler(c *gin.Context) {
 	estType := c.GetString("est_type")
 	estName := c.GetString("est_name")
 
+	hostName := c.Request.Host
+
 	doc, err := client.Collection(estType).Doc(estName).Get(c)
 	if err != nil {
 		log.Println(err)
-		c.JSON(500, gin.H{
-			"Message": "Uh-oh, Something went wrong.",
+		c.HTML(500, "serverError", gin.H{
+			"Message": "Uh-oh something went wrong.",
 		})
 	}
 
@@ -46,7 +48,9 @@ func QueueHandler(c *gin.Context) {
 	if t == "NoToken" {
 		var NextQueue int
 
-		if len(QueueDB.QueueList) == 0 {
+		if len(QueueDB.QueueList) == 0 && QueueDB.CurrentQueueNumber != 1 {
+			NextQueue = int(QueueDB.CurrentQueueNumber)
+		} else if len(QueueDB.QueueList) == 0 {
 			NextQueue = 1
 		} else {
 			NextQueue = QueueList[len(QueueList)-1] + 1
@@ -72,6 +76,7 @@ func QueueHandler(c *gin.Context) {
 			"EstName":            estName,
 			"UserType":           "user",
 			"QueueNumber":        NextQueue,
+			"Hostname":           hostName,
 			"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 		})
 
@@ -87,6 +92,7 @@ func QueueHandler(c *gin.Context) {
 		"EstName":            estName,
 		"UserType":           "user",
 		"QueueNumber":        CustomerQueueNumber,
+		"Hostname":           hostName,
 		"CurrentQueueNumber": QueueDB.CurrentQueueNumber,
 	})
 }

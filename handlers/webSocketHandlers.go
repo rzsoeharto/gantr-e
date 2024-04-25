@@ -54,8 +54,8 @@ func WebsocketHandler(c *gin.Context) {
 }
 
 func broadcastToUsers(estName string, msg string) {
-	data := fmt.Sprintf(`<h1 id="current-queue-number" class="text-9xl text-center font-bold"> %s </h1>`, msg)
-	message := []byte(data)
+	// data := fmt.Sprintf(`<h1 id="current-queue-number" class="text-9xl text-center font-bold"> %s </h1>`, msg)
+	message := []byte(msg)
 	wsConnString := fmt.Sprintf("user%s", estName)
 
 	log.Println("Broadcasting to: ", wsConnString)
@@ -69,7 +69,8 @@ func broadcastToUsers(estName string, msg string) {
 }
 
 func broadcastToFrontDesk(estName string, msg string) {
-	data := fmt.Sprintf(`<p id="queue-number-%s">%s</p>`, msg, msg)
+	data := fmt.Sprintf("<div id='queue-line' class='flex flex-col gap-1 w-full overflow-scroll' hx-swap-oob='beforeend'> <p id='queue-number-%s' hx-swap-oob='beforeend'>%s</p> </div>", msg, msg)
+
 	message := []byte(data)
 	wsConnString := fmt.Sprintf("qm%s", estName)
 

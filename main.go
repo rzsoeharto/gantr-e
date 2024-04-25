@@ -33,6 +33,8 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	r.Static("/static", "./static")
+
 	userGroup := r.Group("/:est_type")
 	{
 		userGroup.GET("/:est_name", middlewares.RequestParams, middlewares.CheckCookies, handlers.QueueHandler)

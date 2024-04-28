@@ -35,6 +35,8 @@ func main() {
 
 	r.Static("/static", "./static")
 
+	r.POST("/admit", handlers.ClearCookie)
+
 	userGroup := r.Group("/:est_type")
 	{
 		userGroup.GET("/:est_name", middlewares.RequestParams, middlewares.CheckCookies, handlers.QueueHandler)

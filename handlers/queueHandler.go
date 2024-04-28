@@ -101,29 +101,6 @@ func QueueHandler(c *gin.Context) {
 }
 
 func ClearCookie(c *gin.Context) {
-	var QueueDB models.QueueModel
-
-	client := database.DbAccess(c)
-
-	estType := c.GetString("est_type")
-	estName := c.GetString("est_name")
-
-	doc, err := client.Collection(estType).Doc(estName).Get(c)
-	if err != nil {
-		log.Println(err)
-		c.HTML(500, "serverError", gin.H{
-			"Message": "Uh-oh something went wrong.",
-		})
-		return
-	}
-
-	if err := doc.DataTo(&QueueDB); err != nil {
-		log.Println("Error scanning data", err)
-		c.HTML(500, "serverError", gin.H{
-			"Message": "Uh-oh something went wrong.",
-		})
-		return
-	}
-
-	
+	c.SetCookie("SID", "", 0, "/", "localhost", true, true)
+	c.HTML(200, "customerAdmitted", gin.H{})
 }

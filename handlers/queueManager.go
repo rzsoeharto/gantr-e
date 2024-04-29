@@ -133,9 +133,9 @@ func UpdateFromFrontDeskHandler(c *gin.Context) {
 
 	if len(QueueList) == 1 {
 		QueueList = []int64{}
+	} else {
+		QueueList = QueueList[1:]
 	}
-
-	QueueList = QueueList[1:]
 
 	QueueDB.CurrentQueueNumber++
 

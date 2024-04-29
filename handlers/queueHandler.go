@@ -52,7 +52,7 @@ func QueueHandler(c *gin.Context) {
 		var NextQueue int
 
 		if len(QueueDB.QueueList) == 0 && QueueDB.CurrentQueueNumber != 1 {
-			NextQueue = int(QueueDB.CurrentQueueNumber)
+			NextQueue = int(QueueDB.CurrentQueueNumber + 1)
 		} else if len(QueueDB.QueueList) == 0 {
 			NextQueue = 1
 		} else {
@@ -101,6 +101,7 @@ func QueueHandler(c *gin.Context) {
 }
 
 func ClearCookie(c *gin.Context) {
-	c.SetCookie("SID", "", 0, "/", "localhost", true, true)
+	c.SetCookie("SID", "", -1, "/", "localhost", true, true)
+
 	c.HTML(200, "customerAdmitted", gin.H{})
 }

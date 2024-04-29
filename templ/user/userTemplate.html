@@ -46,17 +46,25 @@
           "https://firebasestorage.googleapis.com/v0/b/antr-e.appspot.com/o/gantre-notification.wav?alt=media&token=599c30e8-7b52-4fd6-b64d-646cf64ebb50"
         );
         audio.play();
+        audio.loop = true;
 
         setTimeout(function () {
           audio.currentTime = 0;
           audio.pause();
-        }, 15000);
+        }, 20000);
+      }
+
+      async function admit() {
+        const res = await fetch("{{ .HostName }}/admit", { method: "POST" });
+        console.log(res);
+        return;
       }
 
       document.body.addEventListener("htmx:wsBeforeMessage", function (e) {
         const message = e.detail.message;
         if (message == queueNumber) {
           soundNotification();
+          admit();
         }
       });
     </script>
